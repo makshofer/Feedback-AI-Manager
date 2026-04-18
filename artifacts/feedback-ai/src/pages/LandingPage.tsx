@@ -1,0 +1,178 @@
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
+import { ArrowRight, BarChart3, MessageSquare, Mic, Shield, Sparkles } from "lucide-react";
+import { Navbar } from "@/components/layout/Navbar";
+
+export default function LandingPage() {
+  return (
+    <div className="min-h-screen flex flex-col bg-background selection:bg-primary/20 selection:text-primary">
+      <Navbar />
+
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="relative py-24 md:py-32 overflow-hidden border-b">
+          <div className="absolute inset-0 bg-grid-black/[0.02] dark:bg-grid-white/[0.02]" />
+          <div className="container px-4 md:px-6 relative z-10">
+            <div className="flex flex-col items-center text-center space-y-8 max-w-4xl mx-auto">
+              <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-sm font-medium text-primary mb-4">
+                <Sparkles className="mr-2 h-4 w-4" />
+                <span>The intelligent feedback engine for consultants</span>
+              </div>
+              <h1 className="text-5xl md:text-7xl font-bold tracking-tighter text-foreground font-serif leading-tight">
+                Turn executive conversations into <span className="text-primary italic">actionable intelligence.</span>
+              </h1>
+              <p className="text-xl text-muted-foreground max-w-2xl leading-relaxed">
+                Feedback AI transforms freeform notes and voice memos from client meetings into structured CSAT scores, giving your leadership team unparalleled visibility into project health.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 pt-8 w-full max-w-md mx-auto">
+                <Link href="/register" className="w-full">
+                  <Button size="lg" className="w-full text-base h-14 rounded-full group">
+                    Get Started
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </Link>
+                <Link href="/login" className="w-full">
+                  <Button size="lg" variant="outline" className="w-full text-base h-14 rounded-full">
+                    Sign In
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Feature Grid */}
+        <section className="py-24 bg-muted/30">
+          <div className="container px-4 md:px-6">
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold font-serif mb-4">Built for the reality of consulting.</h2>
+              <p className="text-lg text-muted-foreground">You don't have time for complex forms after a tough meeting. We designed the friction out of feedback collection.</p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="bg-card border rounded-2xl p-8 shadow-sm hover-elevate transition-all duration-300">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
+                  <Mic className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold mb-3">Speak Your Mind</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Just hit record. Our advanced speech-to-text transcribes your raw thoughts perfectly, even when you're walking between meetings.
+                </p>
+              </div>
+              <div className="bg-card border rounded-2xl p-8 shadow-sm hover-elevate transition-all duration-300">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
+                  <BarChart3 className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold mb-3">AI-Powered Scoring</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  We automatically extract sentiment and map it to 5 core CSAT criteria: Quality, Timeliness, Communication, Expertise, and Overall Satisfaction.
+                </p>
+              </div>
+              <div className="bg-card border rounded-2xl p-8 shadow-sm hover-elevate transition-all duration-300">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
+                  <Shield className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold mb-3">Executive Visibility</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  A beautiful, dense dashboard for partners and admins to spot troubled projects before the client churns. Cohort analysis built in.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* How it works */}
+        <section className="py-24 border-y">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col md:flex-row gap-12 items-center">
+              <div className="md:w-1/2 space-y-8">
+                <h2 className="text-3xl md:text-5xl font-bold font-serif leading-tight">
+                  From unstructured rant to structured data.
+                </h2>
+                <div className="space-y-6">
+                  <div className="flex gap-4">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">1</div>
+                    <div>
+                      <h4 className="text-xl font-bold mb-2">Record or Type</h4>
+                      <p className="text-muted-foreground">Capture the nuanced feedback from the client sponsor immediately after the check-in.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">2</div>
+                    <div>
+                      <h4 className="text-xl font-bold mb-2">AI Analysis</h4>
+                      <p className="text-muted-foreground">Our models parse the transcript, generate a summary, and score the interaction automatically.</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-4">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">3</div>
+                    <div>
+                      <h4 className="text-xl font-bold mb-2">Review and Save</h4>
+                      <p className="text-muted-foreground">Adjust the AI's sliders if needed, then commit. The dashboard updates instantly.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="md:w-1/2 w-full">
+                <div className="relative rounded-2xl border bg-card p-2 shadow-2xl overflow-hidden aspect-[4/3] flex items-center justify-center">
+                   <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent"></div>
+                   <div className="relative z-10 w-3/4 bg-background border rounded-xl shadow-lg p-6 space-y-4">
+                      <div className="flex items-center gap-3 mb-6">
+                        <MessageSquare className="text-primary w-5 h-5" />
+                        <div className="h-4 w-32 bg-muted rounded animate-pulse"></div>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="font-medium">Quality</span>
+                          <span className="text-primary font-bold">9/10</span>
+                        </div>
+                        <div className="w-full bg-muted rounded-full h-2">
+                          <div className="bg-primary h-2 rounded-full w-[90%]"></div>
+                        </div>
+                        
+                        <div className="flex justify-between items-center text-sm mt-4">
+                          <span className="font-medium">Timeliness</span>
+                          <span className="text-primary font-bold">7/10</span>
+                        </div>
+                        <div className="w-full bg-muted rounded-full h-2">
+                          <div className="bg-primary h-2 rounded-full w-[70%]"></div>
+                        </div>
+                      </div>
+                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="py-32 relative overflow-hidden bg-primary text-primary-foreground">
+          <div className="absolute inset-0 bg-grid-black/[0.1]" />
+          <div className="container px-4 md:px-6 relative z-10 text-center">
+            <h2 className="text-4xl md:text-5xl font-bold font-serif mb-6">Ready to elevate your practice?</h2>
+            <p className="text-xl text-primary-foreground/80 max-w-2xl mx-auto mb-10">
+              Join top-tier consulting firms who use Feedback AI to retain clients and measure performance accurately.
+            </p>
+            <Link href="/register">
+              <Button size="lg" variant="secondary" className="h-14 px-8 text-lg rounded-full text-primary">
+                Create your account
+              </Button>
+            </Link>
+          </div>
+        </section>
+      </main>
+      
+      <footer className="border-t py-12 bg-background">
+        <div className="container px-4 md:px-6 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 font-bold text-foreground mb-4 md:mb-0">
+            <div className="w-6 h-6 rounded bg-primary flex items-center justify-center text-primary-foreground text-xs">
+              F
+            </div>
+            Feedback AI
+          </div>
+          <p>Built for professionals. Crafted with precision.</p>
+        </div>
+      </footer>
+    </div>
+  );
+}

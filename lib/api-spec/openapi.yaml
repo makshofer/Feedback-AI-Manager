@@ -3,13 +3,21 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Feedback AI Assistant API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: feedbacks
+    description: Feedback operations
+  - name: users
+    description: User management (admin)
+  - name: admin
+    description: Admin analytics
 paths:
   /healthz:
     get:
@@ -24,6 +32,345 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Unauthorized
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterBody"
+      responses:
+        "201":
+          description: Registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Bad request
+
+  /feedbacks:
+    get:
+      operationId: listFeedbacks
+      tags: [feedbacks]
+      summary: List feedbacks (own for managers, all for admin)
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            type: ["integer", "null"]
+        - name: projectId
+          in: query
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: List of feedbacks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Feedback"
+    post:
+      operationId: createFeedback
+      tags: [feedbacks]
+      summary: Create feedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFeedbackBody"
+      responses:
+        "201":
+          description: Created feedback
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feedback"
+
+  /feedbacks/{id}:
+    get:
+      operationId: getFeedback
+      tags: [feedbacks]
+      summary: Get feedback by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Feedback
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feedback"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateFeedback
+      tags: [feedbacks]
+      summary: Update feedback
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFeedbackBody"
+      responses:
+        "200":
+          description: Updated feedback
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Feedback"
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteFeedback
+      tags: [feedbacks]
+      summary: Delete feedback
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /feedbacks/transcribe:
+    post:
+      operationId: transcribeFeedback
+      tags: [feedbacks]
+      summary: Transcribe audio and analyze with AI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TranscribeBody"
+      responses:
+        "200":
+          description: Transcribed and analyzed feedback
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TranscribeResponse"
+
+  /feedbacks/analyze:
+    post:
+      operationId: analyzeFeedback
+      tags: [feedbacks]
+      summary: Analyze text feedback with AI and get structured scores
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyzeFeedbackBody"
+      responses:
+        "200":
+          description: Analyzed feedback
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyzeFeedbackResponse"
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users (admin only)
+      responses:
+        "200":
+          description: List of users with stats
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserWithStats"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get user by ID (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserWithStats"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update user (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserBody"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /admin/stats:
+    get:
+      operationId: getAdminStats
+      tags: [admin]
+      summary: Get admin dashboard stats
+      responses:
+        "200":
+          description: Admin stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+
+  /admin/cohort:
+    get:
+      operationId: getCohortAnalysis
+      tags: [admin]
+      summary: Get cohort analysis
+      responses:
+        "200":
+          description: Cohort analysis data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CohortData"
+
+  /admin/activity:
+    get:
+      operationId: getActivityFeed
+      tags: [admin]
+      summary: Get recent platform activity
+      responses:
+        "200":
+          description: Recent activity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+
+  /projects:
+    get:
+      operationId: listProjects
+      tags: [feedbacks]
+      summary: List projects
+      responses:
+        "200":
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+    post:
+      operationId: createProject
+      tags: [feedbacks]
+      summary: Create project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +381,331 @@ components:
       required:
         - status
 
+    LoginBody:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+
+    RegisterBody:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+      required:
+        - username
+        - password
+        - name
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+      required:
+        - user
+        - token
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, manager]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+        lastSeenAt:
+          type: ["string", "null"]
+      required:
+        - id
+        - username
+        - name
+        - role
+        - isActive
+        - createdAt
+
+    UserWithStats:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, manager]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+        lastSeenAt:
+          type: ["string", "null"]
+        feedbackCount:
+          type: integer
+        lastFeedbackAt:
+          type: ["string", "null"]
+      required:
+        - id
+        - username
+        - name
+        - role
+        - isActive
+        - createdAt
+        - feedbackCount
+
+    UpdateUserBody:
+      type: object
+      properties:
+        isActive:
+          type: boolean
+        role:
+          type: string
+          enum: [admin, manager]
+        name:
+          type: string
+
+    FeedbackScores:
+      type: object
+      properties:
+        quality:
+          type: ["number", "null"]
+          description: Quality score 1-10
+        timeliness:
+          type: ["number", "null"]
+          description: Timeliness score 1-10
+        communication:
+          type: ["number", "null"]
+          description: Communication score 1-10
+        expertise:
+          type: ["number", "null"]
+          description: Expertise score 1-10
+        overall:
+          type: ["number", "null"]
+          description: Overall CSAT score 1-10
+
+    Feedback:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        projectId:
+          type: ["integer", "null"]
+        content:
+          type: string
+        summary:
+          type: ["string", "null"]
+        scores:
+          $ref: "#/components/schemas/FeedbackScores"
+        inputType:
+          type: string
+          enum: [text, voice, telegram]
+        status:
+          type: string
+          enum: [pending, processed, reviewed]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        userName:
+          type: ["string", "null"]
+        projectName:
+          type: ["string", "null"]
+      required:
+        - id
+        - userId
+        - content
+        - inputType
+        - status
+        - createdAt
+        - updatedAt
+
+    CreateFeedbackBody:
+      type: object
+      properties:
+        content:
+          type: string
+        projectId:
+          type: ["integer", "null"]
+        inputType:
+          type: string
+          enum: [text, voice, telegram]
+        scores:
+          $ref: "#/components/schemas/FeedbackScores"
+        summary:
+          type: ["string", "null"]
+      required:
+        - content
+        - inputType
+
+    UpdateFeedbackBody:
+      type: object
+      properties:
+        content:
+          type: string
+        projectId:
+          type: ["integer", "null"]
+        scores:
+          $ref: "#/components/schemas/FeedbackScores"
+        summary:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [pending, processed, reviewed]
+
+    TranscribeBody:
+      type: object
+      properties:
+        audioBase64:
+          type: string
+          description: Base64-encoded audio data
+        mimeType:
+          type: string
+      required:
+        - audioBase64
+
+    TranscribeResponse:
+      type: object
+      properties:
+        transcript:
+          type: string
+        scores:
+          $ref: "#/components/schemas/FeedbackScores"
+        summary:
+          type: string
+      required:
+        - transcript
+
+    AnalyzeFeedbackBody:
+      type: object
+      properties:
+        content:
+          type: string
+      required:
+        - content
+
+    AnalyzeFeedbackResponse:
+      type: object
+      properties:
+        scores:
+          $ref: "#/components/schemas/FeedbackScores"
+        summary:
+          type: string
+      required:
+        - scores
+        - summary
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - createdAt
+
+    CreateProjectBody:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+      required:
+        - name
+
+    AdminStats:
+      type: object
+      properties:
+        totalUsers:
+          type: integer
+        activeUsers:
+          type: integer
+        totalFeedbacks:
+          type: integer
+        feedbacksThisMonth:
+          type: integer
+        avgOverallScore:
+          type: ["number", "null"]
+        avgQualityScore:
+          type: ["number", "null"]
+        avgTimelinessScore:
+          type: ["number", "null"]
+        avgCommunicationScore:
+          type: ["number", "null"]
+        avgExpertiseScore:
+          type: ["number", "null"]
+      required:
+        - totalUsers
+        - activeUsers
+        - totalFeedbacks
+        - feedbacksThisMonth
+
+    CohortData:
+      type: object
+      properties:
+        month:
+          type: string
+        registeredUsers:
+          type: integer
+        activeUsers:
+          type: integer
+        feedbacksSubmitted:
+          type: integer
+        conversionRate:
+          type: number
+      required:
+        - month
+        - registeredUsers
+        - activeUsers
+        - feedbacksSubmitted
+        - conversionRate
+
+    ActivityItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+        description:
+          type: string
+        userName:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - type
+        - description
+        - userName
+        - createdAt

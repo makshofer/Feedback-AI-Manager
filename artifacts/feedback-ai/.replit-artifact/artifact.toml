@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Feedback AI Assistant"
+version = "1.0.0"
+id = "artifacts/feedback-ai"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24581
+
+[services.development]
+run = "pnpm --filter @workspace/feedback-ai run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/feedback-ai", "run", "build" ]
+publicDir = "artifacts/feedback-ai/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24581"
+BASE_PATH = "/"
