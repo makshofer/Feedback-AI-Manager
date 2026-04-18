@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { format } from "date-fns";
+import { ru } from "date-fns/locale";
 import { 
   useListFeedbacks, 
   useDeleteFeedback,
@@ -35,17 +36,17 @@ export default function HistoryPage() {
   const { toast } = useToast();
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this feedback?")) return;
+    if (!confirm("Вы уверены, что хотите удалить эту запись?")) return;
     
     try {
       await deleteMutation.mutateAsync({ id });
       queryClient.invalidateQueries({ queryKey: getListFeedbacksQueryKey() });
-      toast({ title: "Feedback deleted" });
+      toast({ title: "Запись удалена" });
     } catch (error) {
       toast({ 
         variant: "destructive", 
-        title: "Delete failed", 
-        description: "Could not delete feedback." 
+        title: "Ошибка удаления", 
+        description: "Не удалось удалить запись." 
       });
     }
   };
@@ -56,16 +57,16 @@ export default function HistoryPage() {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <Link href="/dashboard" className="text-muted-foreground hover:text-primary transition-colors flex items-center text-sm">
-              <ArrowLeft className="h-4 w-4 mr-1" /> Back to capture
+              <ArrowLeft className="h-4 w-4 mr-1" /> Назад
             </Link>
           </div>
-          <h1 className="text-3xl font-bold font-serif">Feedback History</h1>
-          <p className="text-muted-foreground mt-1">Review and edit your previously submitted feedback.</p>
+          <h1 className="text-3xl font-bold font-serif">История обратной связи</h1>
+          <p className="text-muted-foreground mt-1">Просматривайте и редактируйте ранее добавленные записи.</p>
         </div>
         <Link href="/dashboard">
           <Button>
             <Plus className="mr-2 h-4 w-4" />
-            New Entry
+            Новая запись
           </Button>
         </Link>
       </div>
@@ -73,27 +74,27 @@ export default function HistoryPage() {
       <Card>
         <CardContent className="p-0">
           {isLoading ? (
-            <div className="p-8 text-center text-muted-foreground animate-pulse">Loading history...</div>
+            <div className="p-8 text-center text-muted-foreground animate-pulse">Загрузка истории...</div>
           ) : !feedbacks || feedbacks.length === 0 ? (
             <div className="p-12 text-center">
               <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                 <Edit className="h-6 w-6 text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-medium mb-2">No feedback history</h3>
-              <p className="text-muted-foreground mb-6">You haven't submitted any feedback yet.</p>
+              <h3 className="text-lg font-medium mb-2">Нет истории записей</h3>
+              <p className="text-muted-foreground mb-6">Вы ещё не добавили ни одной записи.</p>
               <Link href="/dashboard">
-                <Button variant="outline">Submit your first feedback</Button>
+                <Button variant="outline">Добавить первую запись</Button>
               </Link>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Project</TableHead>
-                  <TableHead className="max-w-[300px]">Summary</TableHead>
-                  <TableHead>Score</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Дата</TableHead>
+                  <TableHead>Проект</TableHead>
+                  <TableHead className="max-w-[300px]">Резюме</TableHead>
+                  <TableHead>Оценка</TableHead>
+                  <TableHead>Статус</TableHead>
                   <TableHead className="w-[80px]"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -101,10 +102,10 @@ export default function HistoryPage() {
                 {feedbacks.map((item) => (
                   <TableRow key={item.id} className="group">
                     <TableCell className="whitespace-nowrap">
-                      {format(new Date(item.createdAt), "MMM d, yyyy")}
+                      {format(new Date(item.createdAt), "d MMM yyyy", { locale: ru })}
                     </TableCell>
                     <TableCell className="font-medium">
-                      {item.projectName || "No Project"}
+                      {item.projectName || "Без проекта"}
                     </TableCell>
                     <TableCell className="max-w-[300px] truncate">
                       {item.summary || item.content}
@@ -115,8 +116,8 @@ export default function HistoryPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={item.status === 'processed' ? 'default' : 'secondary'} className="capitalize font-normal">
-                        {item.status}
+                      <Badge variant={item.status === 'processed' ? 'default' : 'secondary'} className="font-normal">
+                        {item.status === 'processed' ? 'Обработано' : 'Черновик'}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -130,7 +131,7 @@ export default function HistoryPage() {
                           <Link href={`/dashboard/feedback/${item.id}`}>
                             <DropdownMenuItem className="cursor-pointer">
                               <Edit className="mr-2 h-4 w-4" />
-                              Edit & Review
+                              Редактировать
                             </DropdownMenuItem>
                           </Link>
                           <DropdownMenuSeparator />
@@ -139,7 +140,7 @@ export default function HistoryPage() {
                             onClick={() => handleDelete(item.id)}
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
+                            Удалить
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

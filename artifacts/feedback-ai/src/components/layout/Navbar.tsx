@@ -31,7 +31,7 @@ export function Navbar() {
             <div className="flex items-center gap-4">
               <Link href={user.role === "admin" ? "/admin" : "/dashboard"}>
                 <Button variant="ghost" className="text-sm font-medium">
-                  Dashboard
+                  Панель управления
                 </Button>
               </Link>
               
@@ -52,12 +52,12 @@ export function Navbar() {
                   <Link href={user.role === "admin" ? "/admin" : "/dashboard"}>
                     <DropdownMenuItem className="cursor-pointer">
                       <LayoutDashboard className="mr-2 h-4 w-4" />
-                      Dashboard
+                      Панель управления
                     </DropdownMenuItem>
                   </Link>
                   <DropdownMenuItem className="cursor-pointer text-destructive focus:bg-destructive focus:text-destructive-foreground" onSelect={() => logout()}>
                     <LogOut className="mr-2 h-4 w-4" />
-                    Log out
+                    Выйти
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -65,10 +65,10 @@ export function Navbar() {
           ) : (
             <div className="flex items-center gap-2">
               <Link href="/login">
-                <Button variant="ghost">Log in</Button>
+                <Button variant="ghost">Войти</Button>
               </Link>
               <Link href="/register">
-                <Button>Get Started</Button>
+                <Button>Начать</Button>
               </Link>
             </div>
           )}

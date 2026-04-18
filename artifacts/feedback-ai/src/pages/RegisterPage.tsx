@@ -18,9 +18,9 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowRight, Loader2 } from "lucide-react";
 
 const formSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  username: z.string().min(3, "Username must be at least 3 characters").regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  name: z.string().min(2, "Имя должно содержать не менее 2 символов"),
+  username: z.string().min(3, "Имя пользователя должно содержать не менее 3 символов").regex(/^[a-zA-Z0-9_]+$/, "Имя пользователя может содержать только буквы, цифры и подчёркивания"),
+  password: z.string().min(6, "Пароль должен содержать не менее 6 символов"),
 });
 
 export default function RegisterPage() {
@@ -46,16 +46,16 @@ export default function RegisterPage() {
         onSuccess: (data) => {
           login(data.user, data.token);
           toast({
-            title: "Account created",
-            description: "Welcome to Feedback AI.",
+            title: "Аккаунт создан",
+            description: "Добро пожаловать в Feedback AI.",
           });
           setLocation("/dashboard");
         },
         onError: (error) => {
           toast({
             variant: "destructive",
-            title: "Registration failed",
-            description: error.message || "Something went wrong. Please try again.",
+            title: "Ошибка регистрации",
+            description: error.message || "Что-то пошло не так. Попробуйте снова.",
           });
         },
       }
@@ -68,23 +68,23 @@ export default function RegisterPage() {
         <div className="absolute inset-0 bg-grid-black/[0.1]" />
         <div className="relative z-10 max-w-lg mx-auto space-y-6">
           <h2 className="text-4xl font-serif font-bold leading-tight">
-            Structure your intuition.
+            Структурируйте свою интуицию.
           </h2>
           <p className="text-lg text-primary-foreground/80 leading-relaxed">
-            Create an account to start capturing client feedback systematically. Transform subjective feelings into hard data.
+            Создайте аккаунт, чтобы начать системно собирать обратную связь от клиентов. Превратите субъективные ощущения в твёрдые данные.
           </p>
           <div className="pt-8 space-y-4">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-primary-foreground/20 flex items-center justify-center">✓</div>
-              <span>AI-powered sentiment analysis</span>
+              <span>Анализ тональности на основе ИИ</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-primary-foreground/20 flex items-center justify-center">✓</div>
-              <span>Voice-to-text transcription</span>
+              <span>Транскрипция голоса в текст</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-primary-foreground/20 flex items-center justify-center">✓</div>
-              <span>Automated CSAT scoring</span>
+              <span>Автоматическое выставление CSAT-оценок</span>
             </div>
           </div>
         </div>
@@ -97,8 +97,8 @@ export default function RegisterPage() {
               <div className="w-6 h-6 rounded bg-primary/10 flex items-center justify-center text-primary mr-2">F</div>
               Feedback AI
             </Link>
-            <h1 className="text-3xl font-serif font-bold tracking-tight">Create an account</h1>
-            <p className="text-muted-foreground">Enter your details to get started.</p>
+            <h1 className="text-3xl font-serif font-bold tracking-tight">Создать аккаунт</h1>
+            <p className="text-muted-foreground">Введите данные, чтобы начать работу.</p>
           </div>
 
           <Form {...form}>
@@ -108,9 +108,9 @@ export default function RegisterPage() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>Полное имя</FormLabel>
                     <FormControl>
-                      <Input placeholder="Jane Doe" {...field} className="h-12" />
+                      <Input placeholder="Иван Иванов" {...field} className="h-12" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -121,9 +121,9 @@ export default function RegisterPage() {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>Имя пользователя</FormLabel>
                     <FormControl>
-                      <Input placeholder="janedoe" {...field} className="h-12" />
+                      <Input placeholder="ivanov" {...field} className="h-12" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -134,7 +134,7 @@ export default function RegisterPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Пароль</FormLabel>
                     <FormControl>
                       <Input type="password" placeholder="••••••••" {...field} className="h-12" />
                     </FormControl>
@@ -151,7 +151,7 @@ export default function RegisterPage() {
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
                   <>
-                    Create Account
+                    Создать аккаунт
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </>
                 )}
@@ -160,9 +160,9 @@ export default function RegisterPage() {
           </Form>
 
           <div className="text-center text-sm text-muted-foreground pt-4">
-            Already have an account?{" "}
+            Уже есть аккаунт?{" "}
             <Link href="/login" className="font-medium text-primary hover:underline underline-offset-4">
-              Sign in
+              Войти
             </Link>
           </div>
         </div>

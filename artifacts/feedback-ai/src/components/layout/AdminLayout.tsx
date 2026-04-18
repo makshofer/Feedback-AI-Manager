@@ -9,9 +9,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
 
   const navigation = [
-    { name: "Overview", href: "/admin", icon: LayoutDashboard },
-    { name: "Users", href: "/admin/users", icon: Users },
-    { name: "Cohort Analysis", href: "/admin/cohort", icon: BarChart },
+    { name: "Обзор", href: "/admin", icon: LayoutDashboard },
+    { name: "Пользователи", href: "/admin/users", icon: Users },
+    { name: "Когортный анализ", href: "/admin/cohort", icon: BarChart },
   ];
 
   return (
@@ -40,7 +40,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           </nav>
         </aside>
         
-        {/* Mobile Nav */}
+        {/* Мобильная навигация */}
         <div className="md:hidden border-b bg-card/50 overflow-x-auto">
           <nav className="flex p-4 gap-2 min-w-max">
             {navigation.map((item) => {

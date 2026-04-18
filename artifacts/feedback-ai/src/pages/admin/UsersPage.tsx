@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { ru } from "date-fns/locale";
 import { Loader2 } from "lucide-react";
 
 export default function UsersPage() {
@@ -36,12 +37,12 @@ export default function UsersPage() {
         data: { isActive: !currentActive }
       });
       queryClient.invalidateQueries({ queryKey: getListUsersQueryKey() });
-      toast({ title: "User status updated" });
+      toast({ title: "Статус пользователя обновлён" });
     } catch (error) {
       toast({ 
         variant: "destructive", 
-        title: "Update failed", 
-        description: "Could not update user status." 
+        title: "Ошибка обновления", 
+        description: "Не удалось обновить статус пользователя." 
       });
     }
   };
@@ -49,8 +50,8 @@ export default function UsersPage() {
   return (
     <AdminLayout>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold font-serif">Users</h1>
-        <p className="text-muted-foreground mt-1">Manage platform access and view user activity.</p>
+        <h1 className="text-3xl font-bold font-serif">Пользователи</h1>
+        <p className="text-muted-foreground mt-1">Управление доступом к платформе и просмотр активности пользователей.</p>
       </div>
 
       <Card>
@@ -61,18 +62,18 @@ export default function UsersPage() {
             </div>
           ) : !users || users.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
-              No users found.
+              Пользователи не найдены.
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>User</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Feedbacks</TableHead>
-                  <TableHead className="text-right">Last Active</TableHead>
-                  <TableHead className="text-center">Access</TableHead>
+                  <TableHead>Пользователь</TableHead>
+                  <TableHead>Роль</TableHead>
+                  <TableHead>Статус</TableHead>
+                  <TableHead className="text-right">Записей</TableHead>
+                  <TableHead className="text-right">Последняя активность</TableHead>
+                  <TableHead className="text-center">Доступ</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -85,20 +86,20 @@ export default function UsersPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={user.role === 'admin' ? 'default' : 'outline'} className="capitalize font-normal">
-                        {user.role}
+                      <Badge variant={user.role === 'admin' ? 'default' : 'outline'} className="font-normal">
+                        {user.role === 'admin' ? 'Администратор' : 'Менеджер'}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       {user.isActive ? (
                         <span className="inline-flex items-center text-xs font-medium text-green-600 dark:text-green-400">
                           <div className="w-1.5 h-1.5 rounded-full bg-green-600 dark:bg-green-400 mr-2"></div>
-                          Active
+                          Активен
                         </span>
                       ) : (
                         <span className="inline-flex items-center text-xs font-medium text-muted-foreground">
                           <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground mr-2"></div>
-                          Disabled
+                          Отключён
                         </span>
                       )}
                     </TableCell>
@@ -106,7 +107,7 @@ export default function UsersPage() {
                       {user.feedbackCount || 0}
                     </TableCell>
                     <TableCell className="text-right text-muted-foreground text-sm">
-                      {user.lastSeenAt ? format(new Date(user.lastSeenAt), "MMM d, yyyy") : "Never"}
+                      {user.lastSeenAt ? format(new Date(user.lastSeenAt), "d MMM yyyy", { locale: ru }) : "Никогда"}
                     </TableCell>
                     <TableCell className="text-center">
                       <Switch 

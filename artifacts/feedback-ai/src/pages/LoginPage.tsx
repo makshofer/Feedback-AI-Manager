@@ -19,8 +19,8 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowRight, Loader2 } from "lucide-react";
 
 const formSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required"),
+  username: z.string().min(1, "Введите имя пользователя"),
+  password: z.string().min(1, "Введите пароль"),
 });
 
 export default function LoginPage() {
@@ -45,16 +45,16 @@ export default function LoginPage() {
         onSuccess: (data) => {
           login(data.user, data.token);
           toast({
-            title: "Welcome back",
-            description: `Signed in successfully as ${data.user.name}.`,
+            title: "Добро пожаловать",
+            description: `Вы вошли как ${data.user.name}.`,
           });
           setLocation(data.user.role === "admin" ? "/admin" : "/dashboard");
         },
         onError: (error) => {
           toast({
             variant: "destructive",
-            title: "Sign in failed",
-            description: error.message || "Invalid credentials. Please try again.",
+            title: "Ошибка входа",
+            description: error.message || "Неверные учётные данные. Попробуйте снова.",
           });
         },
       }
@@ -70,8 +70,8 @@ export default function LoginPage() {
               <div className="w-6 h-6 rounded bg-primary/10 flex items-center justify-center text-primary mr-2">F</div>
               Feedback AI
             </Link>
-            <h1 className="text-3xl font-serif font-bold tracking-tight">Welcome back</h1>
-            <p className="text-muted-foreground">Sign in to your account to continue.</p>
+            <h1 className="text-3xl font-serif font-bold tracking-tight">С возвращением</h1>
+            <p className="text-muted-foreground">Войдите в аккаунт, чтобы продолжить.</p>
           </div>
 
           <Form {...form}>
@@ -81,9 +81,9 @@ export default function LoginPage() {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>Имя пользователя</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter your username" {...field} className="h-12" />
+                      <Input placeholder="Введите имя пользователя" {...field} className="h-12" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -95,7 +95,7 @@ export default function LoginPage() {
                 render={({ field }) => (
                   <FormItem>
                     <div className="flex items-center justify-between">
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>Пароль</FormLabel>
                     </div>
                     <FormControl>
                       <Input type="password" placeholder="••••••••" {...field} className="h-12" />
@@ -113,7 +113,7 @@ export default function LoginPage() {
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
                   <>
-                    Sign In
+                    Войти
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </>
                 )}
@@ -122,9 +122,9 @@ export default function LoginPage() {
           </Form>
 
           <div className="text-center text-sm text-muted-foreground pt-4">
-            Don't have an account?{" "}
+            Ещё нет аккаунта?{" "}
             <Link href="/register" className="font-medium text-primary hover:underline underline-offset-4">
-              Register
+              Зарегистрироваться
             </Link>
           </div>
         </div>
@@ -136,9 +136,9 @@ export default function LoginPage() {
              <span className="font-serif text-3xl font-bold">"</span>
           </div>
           <h2 className="text-2xl font-serif italic text-foreground leading-relaxed">
-            This tool completely changed how we track client health. No more guessing, just clear signals.
+            Этот инструмент полностью изменил наш подход к контролю удовлетворённости клиентов. Больше никаких догадок — только чёткие сигналы.
           </h2>
-          <p className="font-medium text-muted-foreground">— Senior Partner, Strategy Consulting</p>
+          <p className="font-medium text-muted-foreground">— Старший партнёр, стратегический консалтинг</p>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { 
   useGetCohortAnalysis,
-  getCohortAnalysisQueryKey
+  getGetCohortAnalysisQueryKey
 } from "@workspace/api-client-react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,21 +23,21 @@ export default function CohortPage() {
   return (
     <AdminLayout>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold font-serif">Cohort Analysis</h1>
-        <p className="text-muted-foreground mt-1">Track user retention and engagement over time.</p>
+        <h1 className="text-3xl font-bold font-serif">Когортный анализ</h1>
+        <p className="text-muted-foreground mt-1">Отслеживайте удержание и вовлечённость пользователей с течением времени.</p>
       </div>
 
       <div className="space-y-8">
         <Card>
           <CardContent className="p-6">
-            <h3 className="text-lg font-medium mb-6">User Conversion & Activity</h3>
+            <h3 className="text-lg font-medium mb-6">Конверсия и активность пользователей</h3>
             {isLoading ? (
               <div className="h-[300px] flex items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
             ) : !cohortData || cohortData.length === 0 ? (
               <div className="h-[300px] flex items-center justify-center text-muted-foreground">
-                No cohort data available yet.
+                Данные когортного анализа пока недоступны.
               </div>
             ) : (
               <div className="h-[400px] w-full">
@@ -83,8 +83,8 @@ export default function CohortPage() {
                       }}
                     />
                     <Legend wrapperStyle={{ paddingTop: '20px' }}/>
-                    <Bar yAxisId="left" dataKey="registeredUsers" name="Registered" fill="hsl(var(--muted-foreground))" radius={[4, 4, 0, 0]} opacity={0.3} />
-                    <Bar yAxisId="left" dataKey="activeUsers" name="Active" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                    <Bar yAxisId="left" dataKey="registeredUsers" name="Зарегистрировано" fill="hsl(var(--muted-foreground))" radius={[4, 4, 0, 0]} opacity={0.3} />
+                    <Bar yAxisId="left" dataKey="activeUsers" name="Активных" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -100,17 +100,17 @@ export default function CohortPage() {
               </div>
             ) : !cohortData || cohortData.length === 0 ? (
               <div className="p-8 text-center text-muted-foreground">
-                No cohort data found.
+                Когортные данные не найдены.
               </div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Month</TableHead>
-                    <TableHead className="text-right">Registered Users</TableHead>
-                    <TableHead className="text-right">Active Users</TableHead>
-                    <TableHead className="text-right">Feedbacks</TableHead>
-                    <TableHead className="text-right">Conversion Rate</TableHead>
+                    <TableHead>Месяц</TableHead>
+                    <TableHead className="text-right">Зарегистрировано</TableHead>
+                    <TableHead className="text-right">Активных</TableHead>
+                    <TableHead className="text-right">Записей</TableHead>
+                    <TableHead className="text-right">Конверсия</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

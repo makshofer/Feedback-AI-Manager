@@ -9,6 +9,7 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Users, FileText, Activity, TrendingUp, Star, Clock, Zap, Target } from "lucide-react";
 import { format } from "date-fns";
+import { ru } from "date-fns/locale";
 
 export default function AdminDashboard() {
   const { data: stats, isLoading: statsLoading } = useGetAdminStats({
@@ -29,8 +30,8 @@ export default function AdminDashboard() {
   return (
     <AdminLayout>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold font-serif">Platform Overview</h1>
-        <p className="text-muted-foreground mt-1">Key metrics and recent activity across all users.</p>
+        <h1 className="text-3xl font-bold font-serif">Обзор платформы</h1>
+        <p className="text-muted-foreground mt-1">Ключевые метрики и последняя активность всех пользователей.</p>
       </div>
 
       {statsLoading ? (
@@ -53,33 +54,33 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+                <CardTitle className="text-sm font-medium">Всего пользователей</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.totalUsers}</div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {stats.activeUsers} active this month
+                  {stats.activeUsers} активных в этом месяце
                 </p>
               </CardContent>
             </Card>
             
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Feedback</CardTitle>
+                <CardTitle className="text-sm font-medium">Всего записей</CardTitle>
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.totalFeedbacks}</div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {stats.feedbacksThisMonth} this month
+                  {stats.feedbacksThisMonth} в этом месяце
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Avg Overall CSAT</CardTitle>
+                <CardTitle className="text-sm font-medium">Средний CSAT (общий)</CardTitle>
                 <Star className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -87,14 +88,14 @@ export default function AdminDashboard() {
                   {stats.avgOverallScore?.toFixed(1) || "-"}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Out of 10
+                  Из 10
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Activity Rate</CardTitle>
+                <CardTitle className="text-sm font-medium">Уровень активности</CardTitle>
                 <Activity className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -102,17 +103,17 @@ export default function AdminDashboard() {
                   {stats.totalUsers > 0 ? Math.round((stats.activeUsers / stats.totalUsers) * 100) : 0}%
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Active / Total users
+                  Активные / Все пользователи
                 </p>
               </CardContent>
             </Card>
           </div>
 
-          <h2 className="text-xl font-bold font-serif mb-4">CSAT Breakdown</h2>
+          <h2 className="text-xl font-bold font-serif mb-4">Детализация CSAT</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
              <Card className="bg-muted/30">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Quality</CardTitle>
+                <CardTitle className="text-sm font-medium">Качество</CardTitle>
                 <Target className="h-4 w-4 text-primary" />
               </CardHeader>
               <CardContent>
@@ -123,7 +124,7 @@ export default function AdminDashboard() {
             </Card>
             <Card className="bg-muted/30">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Timeliness</CardTitle>
+                <CardTitle className="text-sm font-medium">Своевременность</CardTitle>
                 <Clock className="h-4 w-4 text-primary" />
               </CardHeader>
               <CardContent>
@@ -134,7 +135,7 @@ export default function AdminDashboard() {
             </Card>
             <Card className="bg-muted/30">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Communication</CardTitle>
+                <CardTitle className="text-sm font-medium">Коммуникация</CardTitle>
                 <TrendingUp className="h-4 w-4 text-primary" />
               </CardHeader>
               <CardContent>
@@ -145,7 +146,7 @@ export default function AdminDashboard() {
             </Card>
             <Card className="bg-muted/30">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium">Expertise</CardTitle>
+                <CardTitle className="text-sm font-medium">Экспертиза</CardTitle>
                 <Zap className="h-4 w-4 text-primary" />
               </CardHeader>
               <CardContent>
@@ -161,8 +162,8 @@ export default function AdminDashboard() {
       <div className="grid lg:grid-cols-3 gap-8">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest actions taken by managers</CardDescription>
+            <CardTitle>Последняя активность</CardTitle>
+            <CardDescription>Последние действия менеджеров</CardDescription>
           </CardHeader>
           <CardContent>
             {activityLoading ? (
@@ -192,7 +193,7 @@ export default function AdminDashboard() {
                         {item.description}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {format(new Date(item.createdAt), "MMM d, h:mm a")}
+                        {format(new Date(item.createdAt), "d MMM, HH:mm", { locale: ru })}
                       </p>
                     </div>
                   </div>
@@ -200,7 +201,7 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <div className="text-center py-8 text-muted-foreground">
-                No recent activity.
+                Нет последней активности.
               </div>
             )}
           </CardContent>
@@ -209,36 +210,36 @@ export default function AdminDashboard() {
         <div>
           <Card>
             <CardHeader>
-              <CardTitle>System Health</CardTitle>
-              <CardDescription>Current platform status</CardDescription>
+              <CardTitle>Состояние системы</CardTitle>
+              <CardDescription>Текущий статус платформы</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">API Endpoints</span>
+                <span className="text-sm font-medium">API-эндпоинты</span>
                 <span className="flex items-center text-sm text-green-600 dark:text-green-400">
                   <div className="w-2 h-2 rounded-full bg-green-600 dark:bg-green-400 mr-2"></div>
-                  Operational
+                  Работает
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">AI Analysis Engine</span>
+                <span className="text-sm font-medium">Движок анализа ИИ</span>
                 <span className="flex items-center text-sm text-green-600 dark:text-green-400">
                   <div className="w-2 h-2 rounded-full bg-green-600 dark:bg-green-400 mr-2"></div>
-                  Operational
+                  Работает
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Transcription Service</span>
+                <span className="text-sm font-medium">Сервис транскрипции</span>
                 <span className="flex items-center text-sm text-green-600 dark:text-green-400">
                   <div className="w-2 h-2 rounded-full bg-green-600 dark:bg-green-400 mr-2"></div>
-                  Operational
+                  Работает
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Database</span>
+                <span className="text-sm font-medium">База данных</span>
                 <span className="flex items-center text-sm text-green-600 dark:text-green-400">
                   <div className="w-2 h-2 rounded-full bg-green-600 dark:bg-green-400 mr-2"></div>
-                  Operational
+                  Работает
                 </span>
               </div>
             </CardContent>

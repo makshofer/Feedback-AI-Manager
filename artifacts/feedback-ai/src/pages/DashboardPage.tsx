@@ -23,6 +23,15 @@ import { Badge } from "@/components/ui/badge";
 import { BrainCircuit, Check, History, Loader2, Mic, FileText, Send } from "lucide-react";
 import { Link } from "wouter";
 import { format } from "date-fns";
+import { ru } from "date-fns/locale";
+
+const scoreLabels: Record<string, string> = {
+  overall: "Общий",
+  quality: "Качество",
+  timeliness: "Своевременность",
+  communication: "Коммуникация",
+  expertise: "Экспертиза",
+};
 
 export default function DashboardPage() {
   const [, setLocation] = useLocation();
@@ -57,8 +66,8 @@ export default function DashboardPage() {
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Transcription failed",
-        description: "Could not process audio. Please try again."
+        title: "Ошибка транскрипции",
+        description: "Не удалось обработать аудио. Попробуйте снова."
       });
     } finally {
       setIsAnalyzing(false);
@@ -77,8 +86,8 @@ export default function DashboardPage() {
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Analysis failed",
-        description: "Could not analyze text. Please try again."
+        title: "Ошибка анализа",
+        description: "Не удалось проанализировать текст. Попробуйте снова."
       });
     } finally {
       setIsAnalyzing(false);
@@ -87,7 +96,7 @@ export default function DashboardPage() {
 
   const handleSubmit = async () => {
     if (!content.trim()) {
-      toast({ title: "Error", description: "Please provide feedback content." });
+      toast({ title: "Ошибка", description: "Пожалуйста, введите текст обратной связи." });
       return;
     }
 
@@ -105,19 +114,18 @@ export default function DashboardPage() {
       queryClient.invalidateQueries({ queryKey: getListFeedbacksQueryKey() });
       
       toast({
-        title: "Feedback Submitted",
-        description: "Your feedback has been successfully processed and saved."
+        title: "Обратная связь сохранена",
+        description: "Ваша запись успешно обработана и сохранена."
       });
 
-      // Reset
       setContent("");
       setProjectId("none");
       setAnalysisResult(null);
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Submission failed",
-        description: "Could not save feedback. Please try again."
+        title: "Ошибка сохранения",
+        description: "Не удалось сохранить запись. Попробуйте снова."
       });
     }
   };
@@ -138,13 +146,13 @@ export default function DashboardPage() {
     <DashboardLayout>
       <div className="flex justify-between items-end mb-8">
         <div>
-          <h1 className="text-3xl font-bold font-serif">Capture Feedback</h1>
-          <p className="text-muted-foreground mt-1">Record or type client feedback to process immediately.</p>
+          <h1 className="text-3xl font-bold font-serif">Добавить обратную связь</h1>
+          <p className="text-muted-foreground mt-1">Запишите или введите обратную связь от клиента для немедленной обработки.</p>
         </div>
         <Link href="/dashboard/history">
           <Button variant="outline">
             <History className="mr-2 h-4 w-4" />
-            View History
+            История
           </Button>
         </Link>
       </div>
@@ -153,19 +161,19 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>New Entry</CardTitle>
-              <CardDescription>Select input method and project to start</CardDescription>
+              <CardTitle>Новая запись</CardTitle>
+              <CardDescription>Выберите метод ввода и проект</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {projects && projects.length > 0 && (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Project (Optional)</label>
+                  <label className="text-sm font-medium">Проект (необязательно)</label>
                   <Select value={projectId} onValueChange={setProjectId}>
                     <SelectTrigger className="w-[300px]">
-                      <SelectValue placeholder="Select project..." />
+                      <SelectValue placeholder="Выбрать проект..." />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none">No Project</SelectItem>
+                      <SelectItem value="none">Без проекта</SelectItem>
                       {projects.map(p => (
                         <SelectItem key={p.id} value={p.id.toString()}>{p.name}</SelectItem>
                       ))}
@@ -176,8 +184,8 @@ export default function DashboardPage() {
 
               <Tabs defaultValue="text" onValueChange={(v) => setInputType(v as "text" | "voice")} className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-4">
-                  <TabsTrigger value="text"><FileText className="h-4 w-4 mr-2"/> Text Notes</TabsTrigger>
-                  <TabsTrigger value="voice"><Mic className="h-4 w-4 mr-2"/> Voice Memo</TabsTrigger>
+                  <TabsTrigger value="text"><FileText className="h-4 w-4 mr-2"/> Текстовые заметки</TabsTrigger>
+                  <TabsTrigger value="voice"><Mic className="h-4 w-4 mr-2"/> Голосовое сообщение</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="voice" className="space-y-4">
@@ -188,8 +196,8 @@ export default function DashboardPage() {
                   {content && (
                     <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 mt-4">
                       <label className="text-sm font-medium flex justify-between">
-                        <span>Transcript</span>
-                        <Badge variant="outline" className="text-xs font-normal">Editable</Badge>
+                        <span>Транскрипция</span>
+                        <Badge variant="outline" className="text-xs font-normal">Редактируемая</Badge>
                       </label>
                       <Textarea 
                         value={content}
@@ -202,7 +210,7 @@ export default function DashboardPage() {
                 
                 <TabsContent value="text" className="space-y-4">
                   <Textarea 
-                    placeholder="Type raw notes from the meeting here..."
+                    placeholder="Введите сырые заметки со встречи здесь..."
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     className="min-h-[200px] resize-y"
@@ -214,9 +222,9 @@ export default function DashboardPage() {
                         disabled={!content.trim() || isAnalyzing}
                       >
                         {isAnalyzing ? (
-                          <><Loader2 className="mr-2 h-4 w-4 animate-spin"/> Analyzing...</>
+                          <><Loader2 className="mr-2 h-4 w-4 animate-spin"/> Анализ...</>
                         ) : (
-                          <><BrainCircuit className="mr-2 h-4 w-4"/> Extract Insights</>
+                          <><BrainCircuit className="mr-2 h-4 w-4"/> Извлечь оценки</>
                         )}
                       </Button>
                     </div>
@@ -232,18 +240,18 @@ export default function DashboardPage() {
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2">
                 <BrainCircuit className="h-5 w-5 text-primary" />
-                AI Analysis
+                Анализ ИИ
               </CardTitle>
               {analysisResult ? (
-                <CardDescription>Review and adjust the extracted scores.</CardDescription>
+                <CardDescription>Проверьте и скорректируйте извлечённые оценки.</CardDescription>
               ) : (
-                <CardDescription>Waiting for input data...</CardDescription>
+                <CardDescription>Ожидание данных...</CardDescription>
               )}
             </CardHeader>
             <CardContent className="space-y-6">
               {analysisResult?.summary && (
                 <div className="space-y-2">
-                  <h4 className="text-sm font-semibold">Summary</h4>
+                  <h4 className="text-sm font-semibold">Резюме</h4>
                   <p className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-md italic">
                     "{analysisResult.summary}"
                   </p>
@@ -256,7 +264,7 @@ export default function DashboardPage() {
                   return (
                     <div key={key} className="space-y-3">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="capitalize font-medium">{key}</span>
+                        <span className="font-medium">{scoreLabels[key]}</span>
                         <span className={`font-bold w-8 text-right ${val >= 8 ? 'text-green-600 dark:text-green-400' : val >= 6 ? 'text-yellow-600 dark:text-yellow-400' : val > 0 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'}`}>
                           {val || '-'}
                         </span>
@@ -283,7 +291,7 @@ export default function DashboardPage() {
                 {createMutation.isPending ? (
                   <Loader2 className="mr-2 h-5 w-5 animate-spin"/>
                 ) : (
-                  <><Send className="mr-2 h-5 w-5"/> Save Feedback</>
+                  <><Send className="mr-2 h-5 w-5"/> Сохранить запись</>
                 )}
               </Button>
             </CardFooter>
@@ -292,7 +300,7 @@ export default function DashboardPage() {
           {recentFeedbacks && recentFeedbacks.length > 0 && (
             <Card>
               <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Recent Entries</CardTitle>
+                <CardTitle className="text-lg">Последние записи</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -300,10 +308,10 @@ export default function DashboardPage() {
                     <div key={f.id} className="flex flex-col gap-1 pb-3 border-b last:border-0 last:pb-0">
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium truncate pr-4">
-                          {f.projectName || "General"}
+                          {f.projectName || "Общий"}
                         </span>
                         <span className="text-xs text-muted-foreground whitespace-nowrap">
-                          {format(new Date(f.createdAt), "MMM d")}
+                          {format(new Date(f.createdAt), "d MMM", { locale: ru })}
                         </span>
                       </div>
                       <p className="text-xs text-muted-foreground line-clamp-1">
@@ -313,8 +321,8 @@ export default function DashboardPage() {
                         <Badge variant="outline" className="text-[10px] h-5 px-1.5 font-normal">
                           CSAT: {f.scores?.overall || '-'}
                         </Badge>
-                        <Badge variant={f.status === 'processed' ? 'default' : 'secondary'} className="text-[10px] h-5 px-1.5 capitalize font-normal">
-                          {f.status}
+                        <Badge variant={f.status === 'processed' ? 'default' : 'secondary'} className="text-[10px] h-5 px-1.5 font-normal">
+                          {f.status === 'processed' ? 'обработано' : f.status}
                         </Badge>
                       </div>
                     </div>

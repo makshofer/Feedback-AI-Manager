@@ -17,6 +17,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Badge } from "@/components/ui/badge";
 import { BrainCircuit, Loader2, ArrowLeft, Send } from "lucide-react";
 import { format } from "date-fns";
+import { ru } from "date-fns/locale";
+
+const scoreLabels: Record<string, string> = {
+  overall: "Общий",
+  quality: "Качество",
+  timeliness: "Своевременность",
+  communication: "Коммуникация",
+  expertise: "Экспертиза",
+};
 
 export default function FeedbackDetailPage({ params }: { params: { id: string } }) {
   const feedbackId = parseInt(params.id, 10);
@@ -55,12 +64,12 @@ export default function FeedbackDetailPage({ params }: { params: { id: string } 
       });
       setScores(result.scores);
       setSummary(result.summary);
-      toast({ title: "Analysis complete" });
+      toast({ title: "Анализ завершён" });
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Analysis failed",
-        description: "Could not analyze text. Please try again."
+        title: "Ошибка анализа",
+        description: "Не удалось проанализировать текст. Попробуйте снова."
       });
     } finally {
       setIsAnalyzing(false);
@@ -69,7 +78,7 @@ export default function FeedbackDetailPage({ params }: { params: { id: string } 
 
   const handleUpdate = async () => {
     if (!content.trim()) {
-      toast({ title: "Error", description: "Please provide feedback content." });
+      toast({ title: "Ошибка", description: "Пожалуйста, введите текст обратной связи." });
       return;
     }
 
@@ -86,16 +95,16 @@ export default function FeedbackDetailPage({ params }: { params: { id: string } 
       queryClient.invalidateQueries({ queryKey: getGetFeedbackQueryKey(feedbackId) });
       
       toast({
-        title: "Feedback Updated",
-        description: "Your changes have been saved successfully."
+        title: "Запись обновлена",
+        description: "Изменения успешно сохранены."
       });
       
       setLocation("/dashboard/history");
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Update failed",
-        description: "Could not save changes. Please try again."
+        title: "Ошибка сохранения",
+        description: "Не удалось сохранить изменения. Попробуйте снова."
       });
     }
   };
@@ -123,10 +132,10 @@ export default function FeedbackDetailPage({ params }: { params: { id: string } 
     return (
       <DashboardLayout>
         <div className="text-center py-12">
-          <h2 className="text-2xl font-bold mb-2">Feedback Not Found</h2>
-          <p className="text-muted-foreground mb-6">The feedback you are looking for does not exist or you don't have access.</p>
+          <h2 className="text-2xl font-bold mb-2">Запись не найдена</h2>
+          <p className="text-muted-foreground mb-6">Запись не существует или у вас нет доступа к ней.</p>
           <Link href="/dashboard/history">
-            <Button>Return to History</Button>
+            <Button>Вернуться к истории</Button>
           </Link>
         </div>
       </DashboardLayout>
@@ -137,19 +146,19 @@ export default function FeedbackDetailPage({ params }: { params: { id: string } 
     <DashboardLayout>
       <div className="flex items-center gap-2 mb-4">
         <Link href="/dashboard/history" className="text-muted-foreground hover:text-primary transition-colors flex items-center text-sm">
-          <ArrowLeft className="h-4 w-4 mr-1" /> Back to history
+          <ArrowLeft className="h-4 w-4 mr-1" /> Назад к истории
         </Link>
       </div>
       
       <div className="flex justify-between items-end mb-8">
         <div>
-          <h1 className="text-3xl font-bold font-serif">Review Feedback</h1>
+          <h1 className="text-3xl font-bold font-serif">Редактировать запись</h1>
           <div className="flex items-center gap-3 mt-2">
             <span className="text-muted-foreground text-sm">
-              Submitted on {format(new Date(feedback.createdAt), "MMMM d, yyyy")}
+              Добавлено {format(new Date(feedback.createdAt), "d MMMM yyyy", { locale: ru })}
             </span>
-            <Badge variant={feedback.status === 'processed' ? 'default' : 'secondary'} className="capitalize font-normal text-xs">
-              {feedback.status}
+            <Badge variant={feedback.status === 'processed' ? 'default' : 'secondary'} className="font-normal text-xs">
+              {feedback.status === 'processed' ? 'Обработано' : 'Черновик'}
             </Badge>
           </div>
         </div>
@@ -160,8 +169,10 @@ export default function FeedbackDetailPage({ params }: { params: { id: string } 
           <Card>
             <CardHeader>
               <CardTitle className="flex justify-between items-center">
-                <span>Content</span>
-                <Badge variant="outline" className="font-normal capitalize">{feedback.inputType}</Badge>
+                <span>Содержание</span>
+                <Badge variant="outline" className="font-normal capitalize">
+                  {feedback.inputType === 'voice' ? 'голос' : 'текст'}
+                </Badge>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -177,9 +188,9 @@ export default function FeedbackDetailPage({ params }: { params: { id: string } 
                   disabled={!content.trim() || isAnalyzing || content === feedback.content}
                 >
                   {isAnalyzing ? (
-                    <><Loader2 className="mr-2 h-4 w-4 animate-spin"/> Re-analyzing...</>
+                    <><Loader2 className="mr-2 h-4 w-4 animate-spin"/> Анализ...</>
                   ) : (
-                    <><BrainCircuit className="mr-2 h-4 w-4"/> Re-analyze Changes</>
+                    <><BrainCircuit className="mr-2 h-4 w-4"/> Повторный анализ</>
                   )}
                 </Button>
               </div>
@@ -192,14 +203,14 @@ export default function FeedbackDetailPage({ params }: { params: { id: string } 
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2">
                 <BrainCircuit className="h-5 w-5 text-primary" />
-                AI Analysis
+                Анализ ИИ
               </CardTitle>
-              <CardDescription>Review and adjust the extracted scores.</CardDescription>
+              <CardDescription>Проверьте и скорректируйте извлечённые оценки.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {summary && (
                 <div className="space-y-2">
-                  <h4 className="text-sm font-semibold">Summary</h4>
+                  <h4 className="text-sm font-semibold">Резюме</h4>
                   <p className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-md italic">
                     "{summary}"
                   </p>
@@ -212,7 +223,7 @@ export default function FeedbackDetailPage({ params }: { params: { id: string } 
                   return (
                     <div key={key} className="space-y-3">
                       <div className="flex justify-between items-center text-sm">
-                        <span className="capitalize font-medium">{key}</span>
+                        <span className="font-medium">{scoreLabels[key]}</span>
                         <span className={`font-bold w-8 text-right ${val >= 8 ? 'text-green-600 dark:text-green-400' : val >= 6 ? 'text-yellow-600 dark:text-yellow-400' : val > 0 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'}`}>
                           {val || '-'}
                         </span>
@@ -239,7 +250,7 @@ export default function FeedbackDetailPage({ params }: { params: { id: string } 
                 {updateMutation.isPending ? (
                   <Loader2 className="mr-2 h-5 w-5 animate-spin"/>
                 ) : (
-                  <><Send className="mr-2 h-5 w-5"/> Save Changes</>
+                  <><Send className="mr-2 h-5 w-5"/> Сохранить изменения</>
                 )}
               </Button>
             </CardFooter>

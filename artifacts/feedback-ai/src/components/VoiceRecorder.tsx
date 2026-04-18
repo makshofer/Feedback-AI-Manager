@@ -37,12 +37,10 @@ export function VoiceRecorder({ onRecordingComplete, isProcessing }: VoiceRecord
         reader.readAsDataURL(audioBlob);
         reader.onloadend = () => {
           const base64data = reader.result as string;
-          // Extract just the base64 part
           const base64 = base64data.split(',')[1];
           onRecordingComplete(base64, recorder.mimeType);
         };
         
-        // Stop all tracks to release the microphone
         stream.getTracks().forEach(track => track.stop());
       };
 
@@ -58,8 +56,8 @@ export function VoiceRecorder({ onRecordingComplete, isProcessing }: VoiceRecord
       console.error("Error accessing microphone:", error);
       toast({
         variant: "destructive",
-        title: "Microphone Access Denied",
-        description: "Please allow microphone access to use voice recording.",
+        title: "Нет доступа к микрофону",
+        description: "Пожалуйста, разрешите доступ к микрофону для записи голоса.",
       });
     }
   };
@@ -85,7 +83,7 @@ export function VoiceRecorder({ onRecordingComplete, isProcessing }: VoiceRecord
       {isProcessing ? (
         <div className="flex flex-col items-center gap-4 py-4">
           <Loader2 className="h-10 w-10 animate-spin text-primary" />
-          <p className="text-sm font-medium animate-pulse">Transcribing and analyzing...</p>
+          <p className="text-sm font-medium animate-pulse">Транскрипция и анализ...</p>
         </div>
       ) : (
         <>
@@ -101,7 +99,7 @@ export function VoiceRecorder({ onRecordingComplete, isProcessing }: VoiceRecord
                 </span>
               </div>
             ) : (
-              <span className="text-muted-foreground text-sm font-medium">Click to start recording</span>
+              <span className="text-muted-foreground text-sm font-medium">Нажмите, чтобы начать запись</span>
             )}
           </div>
 
