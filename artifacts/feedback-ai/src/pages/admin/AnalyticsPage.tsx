@@ -300,7 +300,7 @@ export default function AnalyticsPage() {
         <KPICard
           title="Всего записей"
           value={overview.totalFeedbacks}
-          sub={`${overview.processedFeedbacks} обработано`}
+          sub={`${overview.processedFeedbacks} с оценками`}
           icon={FileText}
         />
         <KPICard
@@ -678,7 +678,7 @@ export default function AnalyticsPage() {
                 <Activity className="h-4 w-4 mt-0.5 flex-shrink-0 text-yellow-500" />
                 <p className="text-sm">
                   {overview.totalFeedbacks - overview.processedFeedbacks} из {overview.totalFeedbacks} записей{" "}
-                  ещё не обработаны AI-анализом. Попросите менеджеров запустить анализ для получения полных данных.
+                  не имеют CSAT-оценок и не учитываются в средних показателях. Для получения полной картины попросите менеджеров запустить анализ по этим записям.
                 </p>
               </div>
             )}

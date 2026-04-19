@@ -129,7 +129,7 @@ router.get("/admin/analytics", requireAdmin, async (_req, res): Promise<void> =>
   const [scoreStats] = await db
     .select({
       totalFeedbacks: count(feedbacksTable.id),
-      processedFeedbacks: sql<number>`COUNT(*) FILTER (WHERE ${feedbacksTable.status} = 'processed')`,
+      processedFeedbacks: sql<number>`COUNT(*) FILTER (WHERE ${feedbacksTable.scoreOverall} IS NOT NULL)`,
       avgOverall: avg(feedbacksTable.scoreOverall),
       avgQuality: avg(feedbacksTable.scoreQuality),
       avgTimeliness: avg(feedbacksTable.scoreTimeliness),
