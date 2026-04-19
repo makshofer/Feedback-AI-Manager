@@ -15,6 +15,7 @@ import FeedbackDetailPage from "@/pages/dashboard/FeedbackDetailPage";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import UsersPage from "@/pages/admin/UsersPage";
 import CohortPage from "@/pages/admin/CohortPage";
+import AnalyticsPage from "@/pages/admin/AnalyticsPage";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -42,6 +43,7 @@ function Router() {
       <ProtectedRoute path="/admin" component={AdminDashboard} requireAdmin />
       <ProtectedRoute path="/admin/users" component={UsersPage} requireAdmin />
       <ProtectedRoute path="/admin/cohort" component={CohortPage} requireAdmin />
+      <ProtectedRoute path="/admin/analytics" component={AnalyticsPage} requireAdmin />
       
       <Route component={NotFound} />
     </Switch>
