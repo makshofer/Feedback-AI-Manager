@@ -17,6 +17,7 @@ import UsersPage from "@/pages/admin/UsersPage";
 import CohortPage from "@/pages/admin/CohortPage";
 import AnalyticsPage from "@/pages/admin/AnalyticsPage";
 import FunnelPage from "@/pages/admin/FunnelPage";
+import WorkflowPage from "@/pages/admin/WorkflowPage";
 import AssistantPage from "@/pages/AssistantPage";
 import NotFound from "@/pages/not-found";
 
@@ -48,6 +49,7 @@ function Router() {
       <ProtectedRoute path="/admin/cohort" component={CohortPage} requireAdmin />
       <ProtectedRoute path="/admin/analytics" component={AnalyticsPage} requireAdmin />
       <ProtectedRoute path="/admin/funnel" component={FunnelPage} requireAdmin />
+      <ProtectedRoute path="/admin/workflow" component={WorkflowPage} requireAdmin />
       
       <Route component={NotFound} />
     </Switch>

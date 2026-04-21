@@ -72,6 +72,21 @@ export default function LandingPage() {
           </div>
         </section>
 
+        <section className="py-16 border-y bg-muted/20">
+          <div className="container px-4 md:px-6">
+            <div className="rounded-2xl border bg-card p-6 md:p-8">
+              <p className="text-xs uppercase tracking-wider text-primary font-semibold">Vibe-coding ready</p>
+              <h3 className="text-2xl font-bold mt-2">Оркестрация через workflow (n8n)</h3>
+              <p className="text-muted-foreground mt-3 max-w-3xl">
+                Решение построено не как монолитный "ручной" pipeline: процесс сбора, STT, LLM/RAG-анализа,
+                записи в БД и ответа в Telegram оформлен как workflow-сценарий. Для администраторов доступна
+                отдельная страница с визуализацией этого потока в разделе Admin → Workflow.
+              </p>
+            </div>
+          </div>
+        </section>
+
+
         <section className="py-20 border-y bg-muted/30">
           <div className="container px-4 md:px-6">
             <div className="max-w-3xl mx-auto text-center space-y-4">
