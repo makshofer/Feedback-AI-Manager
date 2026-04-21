@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
+import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { 
   useListFeedbacks, 
@@ -20,7 +19,7 @@ import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BrainCircuit, Check, History, Loader2, Mic, FileText, Send } from "lucide-react";
+import { BrainCircuit, History, Loader2, Mic, FileText, Send, MessageCircleMore } from "lucide-react";
 import { Link } from "wouter";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
@@ -34,7 +33,6 @@ const scoreLabels: Record<string, string> = {
 };
 
 export default function DashboardPage() {
-  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
@@ -52,7 +50,7 @@ export default function DashboardPage() {
   const analyzeMutation = useAnalyzeFeedback();
   const createMutation = useCreateFeedback();
 
-  const handleVoiceComplete = async (base64: string, mimeType: string) => {
+  const handleVoiceComplete = async (base64: string, mimeType: string, localTranscript?: string) => {
     setIsAnalyzing(true);
     try {
       const result = await transcribeMutation.mutateAsync({ 
@@ -64,11 +62,19 @@ export default function DashboardPage() {
         setAnalysisResult({ scores: result.scores, summary: result.summary });
       }
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Ошибка транскрипции",
-        description: "Не удалось обработать аудио. Попробуйте снова."
-      });
+      if (localTranscript?.trim()) {
+        setContent(localTranscript);
+        toast({
+          title: "Использована локальная расшифровка",
+          description: "Серверная транскрипция недоступна, но распознавание браузера сохранило текст."
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Ошибка транскрипции",
+          description: "Не удалось обработать аудио. Попробуйте снова."
+        });
+      }
     } finally {
       setIsAnalyzing(false);
     }
@@ -146,9 +152,16 @@ export default function DashboardPage() {
     <DashboardLayout>
       <div className="flex justify-between items-end mb-8">
         <div>
-          <h1 className="text-3xl font-bold font-serif">Добавить обратную связь</h1>
-          <p className="text-muted-foreground mt-1">Запишите или введите обратную связь от клиента для немедленной обработки.</p>
+          <h1 className="text-3xl font-bold font-serif">Обратная связь от руководителя</h1>
+          <p className="text-muted-foreground mt-1">Зафиксируйте управленческий комментарий: сайт и Telegram используют общий контур анализа.</p>
         </div>
+        <div className="flex gap-2">
+        <a href="https://t.me/Managers_Feedback_AI_bot" target="_blank" rel="noreferrer">
+          <Button variant="outline">
+            <MessageCircleMore className="mr-2 h-4 w-4" />
+            Telegram-бот
+          </Button>
+        </a>
         <Link href="/dashboard/history">
           <Button variant="outline">
             <History className="mr-2 h-4 w-4" />
@@ -156,12 +169,13 @@ export default function DashboardPage() {
           </Button>
         </Link>
       </div>
+      </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Новая запись</CardTitle>
+              <CardTitle>Новая управленческая запись</CardTitle>
               <CardDescription>Выберите метод ввода и проект</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -210,7 +224,7 @@ export default function DashboardPage() {
                 
                 <TabsContent value="text" className="space-y-4">
                   <Textarea 
-                    placeholder="Введите сырые заметки со встречи здесь..."
+                    placeholder="Опишите обратную связь руководителя (контекст, риски, ожидания, KPI)..."
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     className="min-h-[200px] resize-y"

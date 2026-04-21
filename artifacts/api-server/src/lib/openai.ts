@@ -23,7 +23,7 @@ interface FeedbackScores {
   overall: number | null;
 }
 
-interface AnalysisResult {
+export interface AnalysisResult {
   scores: FeedbackScores;
   summary: string;
 }
@@ -108,6 +108,8 @@ Criteria:
 - communication: Clarity and frequency of communication
 - expertise: Technical and domain expertise shown
 - overall: Overall satisfaction (CSAT)
+
+Relevant historical context from the same manager (RAG): "${ragContext ?? "No context"}"
 
 Feedback: "${content}"
 
