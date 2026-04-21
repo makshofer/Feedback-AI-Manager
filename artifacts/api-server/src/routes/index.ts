@@ -5,7 +5,7 @@ import feedbacksRouter from "./feedbacks";
 import usersRouter from "./users";
 import adminRouter from "./admin";
 import projectsRouter from "./projects";
-import telegramRouter from "./telegram";
+import assistantRouter from "./assistant";
 
 const router: IRouter = Router();
 
@@ -15,6 +15,6 @@ router.use(feedbacksRouter);
 router.use(usersRouter);
 router.use(adminRouter);
 router.use(projectsRouter);
-router.use(telegramRouter);
+router.use(assistantRouter);
 
 export default router;
