@@ -27,6 +27,14 @@ const scoreLabels: Record<string, string> = {
   expertise: "Экспертиза",
 };
 
+const statusLabels: Record<string, string> = {
+  requested: "Запрошен",
+  voice_received: "Голос получен",
+  transcribed: "Расшифрован",
+  auto_scored: "Оценён ИИ",
+  confirmed: "Подтверждён",
+};
+
 export default function FeedbackDetailPage({ params }: { params: { id: string } }) {
   const feedbackId = parseInt(params.id, 10);
   const [, setLocation] = useLocation();
@@ -157,8 +165,8 @@ export default function FeedbackDetailPage({ params }: { params: { id: string } 
             <span className="text-muted-foreground text-sm">
               Добавлено {format(new Date(feedback.createdAt), "d MMMM yyyy", { locale: ru })}
             </span>
-            <Badge variant={feedback.status === 'processed' ? 'default' : 'secondary'} className="font-normal text-xs">
-              {feedback.status === 'processed' ? 'Обработано' : 'Черновик'}
+            <Badge variant={feedback.status === "confirmed" ? "default" : "secondary"} className="font-normal text-xs">
+              {statusLabels[feedback.status] ?? feedback.status}
             </Badge>
           </div>
         </div>

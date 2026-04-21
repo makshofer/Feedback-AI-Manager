@@ -10,7 +10,9 @@ export type UpdateFeedbackBodyStatus =
   (typeof UpdateFeedbackBodyStatus)[keyof typeof UpdateFeedbackBodyStatus];
 
 export const UpdateFeedbackBodyStatus = {
-  pending: "pending",
-  processed: "processed",
-  reviewed: "reviewed",
+  requested: "requested",
+  voice_received: "voice_received",
+  transcribed: "transcribed",
+  auto_scored: "auto_scored",
+  confirmed: "confirmed",
 } as const;

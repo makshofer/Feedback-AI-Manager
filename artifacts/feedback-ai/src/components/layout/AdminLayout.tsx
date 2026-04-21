@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { Navbar } from "./Navbar";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, BarChart, LineChart } from "lucide-react";
+import { LayoutDashboard, Users, BarChart, LineChart, Funnel } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -11,6 +11,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const navigation = [
     { name: "Обзор", href: "/admin", icon: LayoutDashboard },
     { name: "Аналитика CSAT", href: "/admin/analytics", icon: LineChart },
+    { name: "Воронка", href: "/admin/funnel", icon: Funnel },
     { name: "Пользователи", href: "/admin/users", icon: Users },
     { name: "Когортный анализ", href: "/admin/cohort", icon: BarChart },
   ];

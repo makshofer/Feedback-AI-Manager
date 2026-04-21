@@ -116,6 +116,49 @@ router.get("/admin/activity", requireAdmin, async (_req, res): Promise<void> => 
   })));
 });
 
+router.get("/funnel", requireAdmin, async (req, res): Promise<void> => {
+  const rawProjectId = Array.isArray(req.query.projectId) ? req.query.projectId[0] : req.query.projectId;
+  const parsedProjectId = rawProjectId !== undefined ? Number(rawProjectId) : null;
+  const projectId = Number.isFinite(parsedProjectId) ? parsedProjectId : null;
+
+  const whereClause = projectId ? sql`WHERE f.project_id = ${projectId}` : sql``;
+  const countsResult = await db.execute(sql`
+    SELECT
+      COUNT(*) FILTER (WHERE f.status = 'requested')::int AS requested,
+      COUNT(*) FILTER (WHERE f.status = 'voice_received')::int AS voice_received,
+      COUNT(*) FILTER (WHERE f.status = 'transcribed')::int AS transcribed,
+      COUNT(*) FILTER (WHERE f.status = 'auto_scored')::int AS auto_scored,
+      COUNT(*) FILTER (WHERE f.status = 'confirmed')::int AS confirmed
+    FROM feedbacks f
+    ${whereClause}
+  `);
+
+  const projectsResult = await db
+    .select({
+      id: projectsTable.id,
+      name: projectsTable.name,
+    })
+    .from(projectsTable)
+    .orderBy(projectsTable.name);
+
+  const row = (countsResult.rows[0] ?? {}) as Record<string, number>;
+  const requested = Number(row.requested ?? 0);
+  const confirmed = Number(row.confirmed ?? 0);
+  const conversionRequestedToConfirmed = requested > 0 ? Number(((confirmed / requested) * 100).toFixed(1)) : 0;
+
+  res.json({
+    stages: [
+      { status: "requested", label: "Запрошено", count: requested },
+      { status: "voice_received", label: "Получено голосовое", count: Number(row.voice_received ?? 0) },
+      { status: "transcribed", label: "Расшифровано", count: Number(row.transcribed ?? 0) },
+      { status: "auto_scored", label: "Оценено автоматически", count: Number(row.auto_scored ?? 0) },
+      { status: "confirmed", label: "Подтверждено вручную", count: confirmed },
+    ],
+    conversionRequestedToConfirmed,
+    projects: projectsResult,
+  });
+});
+
 router.get("/admin/analytics", requireAdmin, async (_req, res): Promise<void> => {
   // ── 1. Overall KPIs ────────────────────────────────────────────────────────
   const [userStats] = await db

@@ -131,16 +131,33 @@ export async function processTelegramUpdate(update: TelegramUpdate): Promise<voi
   }
 
   let content = message.text?.trim() ?? "";
+  const isVoiceMessage = Boolean(message.voice?.file_id);
 
-  if (message.voice?.file_id) {
+  const [feedback] = await db.insert(feedbacksTable).values({
+    userId,
+    projectId: null,
+    content: content || "pending_transcription",
+    inputType: isVoiceMessage ? "voice" : "text",
+    status: isVoiceMessage ? "voice_received" : "requested",
+  }).returning();
+
+  if (isVoiceMessage) {
     const voicePayload = await fetchVoiceAsBase64(message.voice.file_id);
     content = await transcribeAudio(voicePayload.base64, voicePayload.mimeType);
+    await db
+      .update(feedbacksTable)
+      .set({
+        content,
+        status: "transcribed",
+      })
+      .where(eq(feedbacksTable.id, feedback.id));
   }
 
   const { executiveName, cleanedText } = extractExecutiveName(content);
   const normalizedContent = cleanedText || content;
 
   if (!normalizedContent) {
+    await db.delete(feedbacksTable).where(eq(feedbacksTable.id, feedback.id));
     await sendTelegramMessage(message.chat.id, "Не удалось распознать содержание обратной связи. Пожалуйста, отправьте текст или голос еще раз.");
     return;
   }
@@ -152,19 +169,19 @@ export async function processTelegramUpdate(update: TelegramUpdate): Promise<voi
   const ragContext = await getRecentContextForUser(userId);
   const analysis = await analyzeFeedbackText(normalizedContent, ragContext);
 
-  await db.insert(feedbacksTable).values({
-    userId,
-    projectId: null,
-    content: normalizedContent,
-    summary: analysis.summary,
-    scoreQuality: analysis.scores.quality,
-    scoreTimeliness: analysis.scores.timeliness,
-    scoreCommunication: analysis.scores.communication,
-    scoreExpertise: analysis.scores.expertise,
-    scoreOverall: analysis.scores.overall,
-    inputType: message.voice ? "voice" : "text",
-    status: "processed",
-  });
+  await db
+    .update(feedbacksTable)
+    .set({
+      content: normalizedContent,
+      summary: analysis.summary,
+      scoreQuality: analysis.scores.quality,
+      scoreTimeliness: analysis.scores.timeliness,
+      scoreCommunication: analysis.scores.communication,
+      scoreExpertise: analysis.scores.expertise,
+      scoreOverall: analysis.scores.overall,
+      status: "auto_scored",
+    })
+    .where(eq(feedbacksTable.id, feedback.id));
 
   await db.insert(activityLogTable).values({
     userId,
