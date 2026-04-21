@@ -6,6 +6,7 @@ import usersRouter from "./users";
 import adminRouter from "./admin";
 import projectsRouter from "./projects";
 import assistantRouter from "./assistant";
+import telegramRouter from "./telegram";
 
 const router: IRouter = Router();
 
@@ -16,5 +17,6 @@ router.use(usersRouter);
 router.use(adminRouter);
 router.use(projectsRouter);
 router.use(assistantRouter);
+router.use(telegramRouter);
 
 export default router;
