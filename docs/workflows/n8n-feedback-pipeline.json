@@ -1,0 +1,79 @@
+{
+  "name": "feedback-ai-manager-pipeline",
+  "nodes": [
+    {
+      "name": "Telegram Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "telegram/webhook"
+      }
+    },
+    {
+      "name": "Route Voice/Text",
+      "type": "n8n-nodes-base.if",
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.message.voice.file_id}}",
+              "operation": "notEmpty"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Transcribe Voice",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "={{$env.API_BASE_URL}}/api/feedbacks/transcribe",
+        "method": "POST"
+      }
+    },
+    {
+      "name": "Analyze with RAG",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "={{$env.API_BASE_URL}}/api/feedbacks/analyze",
+        "method": "POST"
+      }
+    },
+    {
+      "name": "Save Feedback",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "={{$env.API_BASE_URL}}/api/feedbacks",
+        "method": "POST"
+      }
+    },
+    {
+      "name": "TG Confirmation",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "={{$env.API_BASE_URL}}/api/telegram/send",
+        "method": "POST"
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Webhook": {
+      "main": [[{"node": "Route Voice/Text", "type": "main", "index": 0}]]
+    },
+    "Route Voice/Text": {
+      "main": [
+        [{"node": "Transcribe Voice", "type": "main", "index": 0}],
+        [{"node": "Analyze with RAG", "type": "main", "index": 0}]
+      ]
+    },
+    "Transcribe Voice": {
+      "main": [[{"node": "Analyze with RAG", "type": "main", "index": 0}]]
+    },
+    "Analyze with RAG": {
+      "main": [[{"node": "Save Feedback", "type": "main", "index": 0}]]
+    },
+    "Save Feedback": {
+      "main": [[{"node": "TG Confirmation", "type": "main", "index": 0}]]
+    }
+  }
+}
