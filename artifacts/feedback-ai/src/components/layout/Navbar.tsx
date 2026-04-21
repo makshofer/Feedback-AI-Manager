@@ -28,12 +28,14 @@ export function Navbar() {
         </Link>
 
         <nav className="flex items-center gap-3">
-          <a href={TELEGRAM_BOT_URL} target="_blank" rel="noreferrer">
-            <Button variant="outline" size="sm" className="hidden sm:inline-flex">
-              <MessageCircleMore className="h-4 w-4 mr-2" />
-              Telegram-бот
-            </Button>
-          </a>
+          {user?.role !== "admin" && (
+            <a href={TELEGRAM_BOT_URL} target="_blank" rel="noreferrer">
+              <Button variant="outline" size="sm" className="hidden sm:inline-flex">
+                <MessageCircleMore className="h-4 w-4 mr-2" />
+                Telegram-бот
+              </Button>
+            </a>
+          )}
 
           {user ? (
             <div className="flex items-center gap-3">
