@@ -426,7 +426,10 @@ export default function AnalyticsPage() {
                 />
                 <Tooltip
                   contentStyle={tooltipStyle}
-                  formatter={(v: number | null) => [v != null ? v.toFixed(1) : "—", ""]}
+                  formatter={(value: number | string) => {
+                    const numeric = typeof value === "number" ? value : Number.parseFloat(value);
+                    return [Number.isFinite(numeric) ? numeric.toFixed(1) : "—", ""];
+                  }}
                 />
                 <Legend wrapperStyle={{ paddingTop: 16, fontSize: 12 }} />
                 {CRITERIA.map(c => (

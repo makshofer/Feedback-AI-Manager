@@ -16,6 +16,23 @@ import { analyzeFeedbackText, transcribeAudio } from "../lib/openai";
 
 const router: IRouter = Router();
 
+async function buildRagContextForUser(userId: number): Promise<string> {
+  const rows = await db
+    .select({ summary: feedbacksTable.summary, content: feedbacksTable.content })
+    .from(feedbacksTable)
+    .where(eq(feedbacksTable.userId, userId))
+    .orderBy(desc(feedbacksTable.createdAt))
+    .limit(5);
+
+  if (rows.length === 0) {
+    return "No historical feedback context available.";
+  }
+
+  return rows
+    .map((row, index) => `Context ${index + 1}: ${row.summary ?? row.content}`)
+    .join("\n");
+}
+
 function formatFeedback(f: typeof feedbacksTable.$inferSelect, userName?: string | null, projectName?: string | null) {
   return {
     id: f.id,
@@ -48,8 +65,10 @@ router.post("/feedbacks/transcribe", requireAuth, async (req, res): Promise<void
 
   const { audioBase64, mimeType } = parsed.data;
 
+  const authUser = getUser(req)!;
   const transcript = await transcribeAudio(audioBase64, mimeType ?? undefined);
-  const analysis = await analyzeFeedbackText(transcript);
+  const ragContext = await buildRagContextForUser(authUser.userId);
+  const analysis = await analyzeFeedbackText(transcript, ragContext);
 
   res.json({
     transcript,
@@ -65,7 +84,9 @@ router.post("/feedbacks/analyze", requireAuth, async (req, res): Promise<void> =
     return;
   }
 
-  const analysis = await analyzeFeedbackText(parsed.data.content);
+  const authUser = getUser(req)!;
+  const ragContext = await buildRagContextForUser(authUser.userId);
+  const analysis = await analyzeFeedbackText(parsed.data.content, ragContext);
   res.json(analysis);
 });
 
