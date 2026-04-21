@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import { LogOut, User as UserIcon, LayoutDashboard, Bot } from "lucide-react";
+import { LogOut, User as UserIcon, LayoutDashboard, Bot, MessageCircleMore } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,

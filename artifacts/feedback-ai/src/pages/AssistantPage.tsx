@@ -22,7 +22,7 @@ export default function AssistantPage() {
     {
       role: "assistant",
       content:
-        "Привет! Я AI-ассистент по методологии фидбека и CSAT. Спросите меня, как интерпретировать оценки, как улучшать процессы и как работать с системой.",
+        "Привет! Я RAG-ассистент по методологии фидбека и CSAT. Спросите меня, как интерпретировать оценки, как улучшать процессы и как работать с системой.",
       createdAt: new Date().toISOString(),
     },
   ]);
@@ -71,7 +71,7 @@ export default function AssistantPage() {
       toast({
         variant: "destructive",
         title: "Ошибка запроса",
-        description: "Проблема при обращении к AI-ассистенту.",
+        description: "Проблема при обращении к RAG-ассистенту.",
       });
     } finally {
       setIsLoading(false);

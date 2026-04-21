@@ -109,8 +109,6 @@ Criteria:
 - expertise: Technical and domain expertise shown
 - overall: Overall satisfaction (CSAT)
 
-Relevant historical context from the same manager (RAG): "${ragContext ?? "No context"}"
-
 Feedback: "${content}"
 
 Respond ONLY with valid JSON in this exact format:
