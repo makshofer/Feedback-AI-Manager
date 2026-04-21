@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import { LogOut, User as UserIcon, LayoutDashboard, Settings } from "lucide-react";
+import { LogOut, User as UserIcon, LayoutDashboard, MessageCircleMore } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,31 +10,41 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+
+const TELEGRAM_BOT_URL = "https://t.me/Managers_Feedback_AI_bot";
 
 export function Navbar() {
   const { user, logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-between">
+      <div className="container mx-auto flex h-16 items-center justify-between gap-4">
         <Link href="/">
           <div className="flex items-center gap-2 font-bold text-xl tracking-tight text-primary cursor-pointer">
-            <div className="w-8 h-8 rounded bg-primary flex items-center justify-center text-primary-foreground">
-              F
-            </div>
+            <div className="w-8 h-8 rounded bg-primary flex items-center justify-center text-primary-foreground">F</div>
             Feedback AI
           </div>
         </Link>
 
-        <nav className="flex items-center gap-4">
+        <nav className="flex items-center gap-3">
+          <a href={TELEGRAM_BOT_URL} target="_blank" rel="noreferrer">
+            <Button variant="outline" size="sm" className="hidden sm:inline-flex">
+              <MessageCircleMore className="h-4 w-4 mr-2" />
+              Telegram-бот
+            </Button>
+          </a>
+
           {user ? (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <Badge variant={user.role === "admin" ? "default" : "secondary"} className="uppercase text-[10px] tracking-wide">
+                Роль: {user.role === "admin" ? "Администратор" : "Менеджер"}
+              </Badge>
+
               <Link href={user.role === "admin" ? "/admin" : "/dashboard"}>
-                <Button variant="ghost" className="text-sm font-medium">
-                  Панель управления
-                </Button>
+                <Button variant="ghost" className="text-sm font-medium">Панель управления</Button>
               </Link>
-              
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="rounded-full">
