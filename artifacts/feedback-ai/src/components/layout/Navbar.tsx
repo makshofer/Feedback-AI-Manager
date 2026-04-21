@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import { LogOut, User as UserIcon, LayoutDashboard, Settings } from "lucide-react";
+import { LogOut, User as UserIcon, LayoutDashboard, Bot } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +34,11 @@ export function Navbar() {
                   Панель управления
                 </Button>
               </Link>
+              <Link href="/assistant">
+                <Button variant="ghost" className="text-sm font-medium">
+                  AI-ассистент
+                </Button>
+              </Link>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -53,6 +58,12 @@ export function Navbar() {
                     <DropdownMenuItem className="cursor-pointer">
                       <LayoutDashboard className="mr-2 h-4 w-4" />
                       Панель управления
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/assistant">
+                    <DropdownMenuItem className="cursor-pointer">
+                      <Bot className="mr-2 h-4 w-4" />
+                      AI-ассистент
                     </DropdownMenuItem>
                   </Link>
                   <DropdownMenuItem className="cursor-pointer text-destructive focus:bg-destructive focus:text-destructive-foreground" onSelect={() => logout()}>
