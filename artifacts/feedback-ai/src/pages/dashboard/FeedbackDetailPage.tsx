@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/lib/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BrainCircuit, Loader2, ArrowLeft, Send } from "lucide-react";
@@ -40,6 +41,7 @@ export default function FeedbackDetailPage({ params }: { params: { id: string } 
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   
   const { data: feedback, isLoading } = useGetFeedback(feedbackId, { 
     query: { enabled: !!feedbackId, queryKey: getGetFeedbackQueryKey(feedbackId) } 
@@ -122,6 +124,23 @@ export default function FeedbackDetailPage({ params }: { params: { id: string } 
       setScores({
         ...scores,
         [key]: value[0]
+      });
+    }
+  };
+
+  const handleConfirm = async () => {
+    try {
+      await updateMutation.mutateAsync({
+        id: feedbackId,
+        data: { status: "confirmed" },
+      });
+      queryClient.invalidateQueries({ queryKey: getGetFeedbackQueryKey(feedbackId) });
+      toast({ title: "Запись подтверждена" });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Ошибка подтверждения",
+        description: "Не удалось подтвердить запись.",
       });
     }
   };
@@ -250,17 +269,24 @@ export default function FeedbackDetailPage({ params }: { params: { id: string } 
               </div>
             </CardContent>
             <CardFooter className="bg-muted/20 border-t pt-6">
-              <Button 
-                onClick={handleUpdate} 
-                disabled={updateMutation.isPending} 
-                className="w-full text-base h-12"
-              >
-                {updateMutation.isPending ? (
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin"/>
-                ) : (
-                  <><Send className="mr-2 h-5 w-5"/> Сохранить изменения</>
+              <div className="grid w-full gap-3">
+                <Button 
+                  onClick={handleUpdate} 
+                  disabled={updateMutation.isPending} 
+                  className="w-full text-base h-12"
+                >
+                  {updateMutation.isPending ? (
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin"/>
+                  ) : (
+                    <><Send className="mr-2 h-5 w-5"/> Сохранить изменения</>
+                  )}
+                </Button>
+                {user?.role === "admin" && feedback.status !== "confirmed" && (
+                  <Button variant="secondary" onClick={handleConfirm} disabled={updateMutation.isPending}>
+                    Подтвердить вручную
+                  </Button>
                 )}
-              </Button>
+              </div>
             </CardFooter>
           </Card>
         </div>

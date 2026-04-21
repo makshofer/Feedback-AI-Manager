@@ -6,6 +6,7 @@ import {
   useTranscribeFeedback, 
   useAnalyzeFeedback, 
   useCreateFeedback,
+  useUpdateFeedback,
   FeedbackScores,
   getListFeedbacksQueryKey
 } from "@workspace/api-client-react";
@@ -39,6 +40,7 @@ export default function DashboardPage() {
   const [content, setContent] = useState("");
   const [projectId, setProjectId] = useState<string>("none");
   const [inputType, setInputType] = useState<"text" | "voice">("text");
+  const [draftVoiceFeedbackId, setDraftVoiceFeedbackId] = useState<number | null>(null);
   
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<{scores: FeedbackScores, summary: string} | null>(null);
@@ -49,15 +51,33 @@ export default function DashboardPage() {
   const transcribeMutation = useTranscribeFeedback();
   const analyzeMutation = useAnalyzeFeedback();
   const createMutation = useCreateFeedback();
+  const updateMutation = useUpdateFeedback();
 
   const handleVoiceComplete = async (base64: string, mimeType: string, localTranscript?: string) => {
     setIsAnalyzing(true);
     try {
+      const draftFeedback = await createMutation.mutateAsync({
+        data: {
+          content: localTranscript?.trim() || "pending_transcription",
+          inputType: "voice",
+          projectId: projectId !== "none" ? parseInt(projectId, 10) : undefined,
+        },
+      });
+      setDraftVoiceFeedbackId(draftFeedback.id);
+
       const result = await transcribeMutation.mutateAsync({ 
         data: { audioBase64: base64, mimeType } 
       });
       
       setContent(result.transcript);
+      await updateMutation.mutateAsync({
+        id: draftFeedback.id,
+        data: {
+          content: result.transcript,
+          summary: result.summary,
+          scores: result.scores,
+        },
+      });
       if (result.scores && result.summary) {
         setAnalysisResult({ scores: result.scores, summary: result.summary });
       }
@@ -107,15 +127,27 @@ export default function DashboardPage() {
     }
 
     try {
-      await createMutation.mutateAsync({
-        data: {
-          content,
-          inputType,
-          projectId: projectId !== "none" ? parseInt(projectId, 10) : undefined,
-          scores: analysisResult?.scores,
-          summary: analysisResult?.summary
-        }
-      });
+      if (inputType === "voice" && draftVoiceFeedbackId) {
+        await updateMutation.mutateAsync({
+          id: draftVoiceFeedbackId,
+          data: {
+            content,
+            projectId: projectId !== "none" ? parseInt(projectId, 10) : null,
+            scores: analysisResult?.scores,
+            summary: analysisResult?.summary,
+          },
+        });
+      } else {
+        await createMutation.mutateAsync({
+          data: {
+            content,
+            inputType,
+            projectId: projectId !== "none" ? parseInt(projectId, 10) : undefined,
+            scores: analysisResult?.scores,
+            summary: analysisResult?.summary
+          }
+        });
+      }
 
       queryClient.invalidateQueries({ queryKey: getListFeedbacksQueryKey() });
       
@@ -127,6 +159,7 @@ export default function DashboardPage() {
       setContent("");
       setProjectId("none");
       setAnalysisResult(null);
+      setDraftVoiceFeedbackId(null);
     } catch (error) {
       toast({
         variant: "destructive",
