@@ -29,6 +29,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Edit, Trash2, ArrowLeft, Plus } from "lucide-react";
 
+const statusLabels: Record<string, string> = {
+  requested: "Запрошен",
+  voice_received: "Голос получен",
+  transcribed: "Расшифрован",
+  auto_scored: "Оценён ИИ",
+  confirmed: "Подтверждён",
+};
+
 export default function HistoryPage() {
   const { data: feedbacks, isLoading } = useListFeedbacks({});
   const deleteMutation = useDeleteFeedback();
@@ -116,8 +124,8 @@ export default function HistoryPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={item.status === 'processed' ? 'default' : 'secondary'} className="font-normal">
-                        {item.status === 'processed' ? 'Обработано' : 'Черновик'}
+                      <Badge variant={item.status === "confirmed" ? "default" : "secondary"} className="font-normal">
+                        {statusLabels[item.status] ?? item.status}
                       </Badge>
                     </TableCell>
                     <TableCell>

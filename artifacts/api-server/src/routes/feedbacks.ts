@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { db, feedbacksTable, usersTable, projectsTable, activityLogTable } from "@workspace/db";
-import { eq, and, desc, sql } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import {
   CreateFeedbackBody,
   UpdateFeedbackBody,
@@ -56,6 +56,16 @@ function formatFeedback(f: typeof feedbacksTable.$inferSelect, userName?: string
   };
 }
 
+function deriveCreateStatus(inputType: "text" | "voice" | "telegram", hasScores: boolean): string {
+  if (hasScores) {
+    return "auto_scored";
+  }
+  if (inputType === "voice") {
+    return "voice_received";
+  }
+  return "requested";
+}
+
 router.post("/feedbacks/transcribe", requireAuth, async (req, res): Promise<void> => {
   const parsed = TranscribeFeedbackBody.safeParse(req.body);
   if (!parsed.success) {
@@ -93,6 +103,8 @@ router.post("/feedbacks/analyze", requireAuth, async (req, res): Promise<void> =
 router.get("/feedbacks", requireAuth, async (req, res): Promise<void> => {
   const authUser = getUser(req)!;
   const params = ListFeedbacksQueryParams.safeParse(req.query);
+  const queryParams = params.success ? params.data : {};
+  const conditions = [];
 
   let query = db
     .select({
@@ -105,9 +117,17 @@ router.get("/feedbacks", requireAuth, async (req, res): Promise<void> => {
     .leftJoin(projectsTable, eq(feedbacksTable.projectId, projectsTable.id));
 
   if (authUser.role !== "admin") {
-    query = query.where(eq(feedbacksTable.userId, authUser.userId)) as typeof query;
-  } else if (params.success && params.data.userId) {
-    query = query.where(eq(feedbacksTable.userId, params.data.userId)) as typeof query;
+    conditions.push(eq(feedbacksTable.userId, authUser.userId));
+  } else if (queryParams.userId) {
+    conditions.push(eq(feedbacksTable.userId, queryParams.userId));
+  }
+
+  if (queryParams.projectId) {
+    conditions.push(eq(feedbacksTable.projectId, queryParams.projectId));
+  }
+
+  if (conditions.length > 0) {
+    query = query.where(and(...conditions)) as typeof query;
   }
 
   const rows = await query.orderBy(desc(feedbacksTable.createdAt));
@@ -135,7 +155,7 @@ router.post("/feedbacks", requireAuth, async (req, res): Promise<void> => {
     scoreExpertise: scores?.expertise ?? null,
     scoreOverall: scores?.overall ?? null,
     inputType,
-    status: scores ? "processed" : "pending",
+    status: deriveCreateStatus(inputType, Boolean(scores)),
   }).returning();
 
   await db.insert(activityLogTable).values({
@@ -210,13 +230,16 @@ router.patch("/feedbacks/:id", requireAuth, async (req, res): Promise<void> => {
   if (projectId !== undefined) updateData.projectId = projectId ?? null;
   if (summary !== undefined) updateData.summary = summary ?? null;
   if (status !== undefined) updateData.status = status;
+  if (content !== undefined && existing.inputType === "voice" && status === undefined) {
+    updateData.status = "transcribed";
+  }
   if (scores !== undefined) {
     updateData.scoreQuality = scores?.quality ?? null;
     updateData.scoreTimeliness = scores?.timeliness ?? null;
     updateData.scoreCommunication = scores?.communication ?? null;
     updateData.scoreExpertise = scores?.expertise ?? null;
     updateData.scoreOverall = scores?.overall ?? null;
-    if (!status) updateData.status = "processed";
+    if (!status) updateData.status = "auto_scored";
   }
 
   const [fb] = await db.update(feedbacksTable).set(updateData).where(eq(feedbacksTable.id, id)).returning();

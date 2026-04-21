@@ -85,7 +85,7 @@ export const ListFeedbacksResponseItem = zod.object({
     })
     .optional(),
   inputType: zod.enum(["text", "voice", "telegram"]),
-  status: zod.enum(["pending", "processed", "reviewed"]),
+  status: zod.enum(["requested", "voice_received", "transcribed", "auto_scored", "confirmed"]),
   createdAt: zod.string(),
   updatedAt: zod.string(),
   userName: zod.string().nullish(),
@@ -141,7 +141,7 @@ export const GetFeedbackResponse = zod.object({
     })
     .optional(),
   inputType: zod.enum(["text", "voice", "telegram"]),
-  status: zod.enum(["pending", "processed", "reviewed"]),
+  status: zod.enum(["requested", "voice_received", "transcribed", "auto_scored", "confirmed"]),
   createdAt: zod.string(),
   updatedAt: zod.string(),
   userName: zod.string().nullish(),
@@ -171,7 +171,7 @@ export const UpdateFeedbackBody = zod.object({
     })
     .optional(),
   summary: zod.string().nullish(),
-  status: zod.enum(["pending", "processed", "reviewed"]).optional(),
+  status: zod.enum(["requested", "voice_received", "transcribed", "auto_scored", "confirmed"]).optional(),
 });
 
 export const UpdateFeedbackResponse = zod.object({
@@ -193,7 +193,7 @@ export const UpdateFeedbackResponse = zod.object({
     })
     .optional(),
   inputType: zod.enum(["text", "voice", "telegram"]),
-  status: zod.enum(["pending", "processed", "reviewed"]),
+  status: zod.enum(["requested", "voice_received", "transcribed", "auto_scored", "confirmed"]),
   createdAt: zod.string(),
   updatedAt: zod.string(),
   userName: zod.string().nullish(),

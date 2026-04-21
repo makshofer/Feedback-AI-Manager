@@ -524,7 +524,7 @@ components:
           enum: [text, voice, telegram]
         status:
           type: string
-          enum: [pending, processed, reviewed]
+          enum: [requested, voice_received, transcribed, auto_scored, confirmed]
         createdAt:
           type: string
         updatedAt:
@@ -573,7 +573,7 @@ components:
           type: ["string", "null"]
         status:
           type: string
-          enum: [pending, processed, reviewed]
+          enum: [requested, voice_received, transcribed, auto_scored, confirmed]
 
     TranscribeBody:
       type: object

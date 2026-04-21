@@ -16,6 +16,7 @@ import AdminDashboard from "@/pages/admin/AdminDashboard";
 import UsersPage from "@/pages/admin/UsersPage";
 import CohortPage from "@/pages/admin/CohortPage";
 import AnalyticsPage from "@/pages/admin/AnalyticsPage";
+import FunnelPage from "@/pages/admin/FunnelPage";
 import AssistantPage from "@/pages/AssistantPage";
 import NotFound from "@/pages/not-found";
 
@@ -46,6 +47,7 @@ function Router() {
       <ProtectedRoute path="/admin/users" component={UsersPage} requireAdmin />
       <ProtectedRoute path="/admin/cohort" component={CohortPage} requireAdmin />
       <ProtectedRoute path="/admin/analytics" component={AnalyticsPage} requireAdmin />
+      <ProtectedRoute path="/admin/funnel" component={FunnelPage} requireAdmin />
       
       <Route component={NotFound} />
     </Switch>
